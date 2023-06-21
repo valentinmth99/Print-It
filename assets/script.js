@@ -16,23 +16,45 @@ const slides = [
     image: "slide4.png",
     tagLine: "Autocollants <span>avec découpe laser sur mesure</span>",
   },
+  {
+    image: "slide5.jpg",
+    tagLine: "Test",
+  },
 ];
+
+let slidesNumber = slides.length;
+
+/// Nombre de points selon le nombre d'images dans le slider
+const dotsDiv = document.querySelector(".dots");
+
+for (let i = 0; i < slides.length; i++) {
+  let dot = document.createElement("span");
+  dot.className = "dot";
+  dotsDiv.appendChild(dot);
+}
 
 function getSlideNumber() {
   const imgSrc = document.querySelector(".banner-img").getAttribute("src");
   return Number(imgSrc.match(/\d+/g));
 }
 
+/// Affichage point rempli selon l'image en HTML
+
+let currentIndex = getSlideNumber();
+
+let dotSelected = document.getElementsByClassName("dot")[currentIndex - 1];
+dotSelected.className = "dot dot_selected";
+
 function getPreviousNumber() {
   if (currentIndex == 1) {
-    return 4;
+    return slidesNumber;
   } else {
     return currentIndex - 1;
   }
 }
 
 function getNextNumber() {
-  if (currentIndex == 4) {
+  if (currentIndex == slidesNumber) {
     return 1;
   } else {
     return currentIndex + 1;
@@ -49,33 +71,18 @@ function updateDotSelection() {
   dotSelected.className = "dot dot_selected";
 }
 
-function updateCaroussel(newIndex) {
-  const imgDiv = document.querySelector(".banner-img");
-
-  if (newIndex == 4) {
-    imgDiv.src = "./assets/images/slideshow/slide" + newIndex + ".png";
-  } else {
-    imgDiv.src = "./assets/images/slideshow/slide" + newIndex + ".jpg";
-  }
+function updateCarroussel(newIndex) {
+  let textBanner = document.querySelector("#banner p");
+  let imgBanner = document.querySelector(".banner-img");
+  let newIgmSrc = document
+    .querySelector(".banner-img")
+    .getAttribute("src")
+    .replace(slides[currentIndex - 1]["image"], slides[newIndex - 1]["image"]);
+  imgBanner.src = newIgmSrc;
+  textBanner.innerHTML = slides[newIndex - 1]["tagLine"];
 }
 
-/// Nombre de points selon le nombre d'images dans le slider
-const dotsDiv = document.querySelector(".dots");
-
-for (let i = 0; i < slides.length; i++) {
-  let dot = document.createElement("span");
-  dot.className = "dot";
-  dotsDiv.appendChild(dot);
-}
-
-/// Affichage point rempli selon l'image en HTML
-
-let currentIndex = getSlideNumber();
-
-let dotSelected = document.getElementsByClassName("dot")[currentIndex - 1];
-dotSelected.className = "dot dot_selected";
-
-// Clics gauches et droits 
+// Clics gauches et droits
 
 const arrowLeft = document.querySelector(".arrow_left");
 const arrowRight = document.querySelector(".arrow_right");
@@ -83,16 +90,15 @@ const arrowRight = document.querySelector(".arrow_right");
 arrowLeft.addEventListener("click", (event) => {
   let newIndex = getPreviousNumber();
   removeDotSelection();
+  updateCarroussel(newIndex);
   currentIndex = newIndex;
   updateDotSelection();
-  updateCaroussel(newIndex);
-
 });
 
 arrowRight.addEventListener("click", (event) => {
   let newIndex = getNextNumber();
   removeDotSelection();
+  updateCarroussel(newIndex);
   currentIndex = newIndex;
   updateDotSelection();
-  updateCaroussel(newIndex);
 });
